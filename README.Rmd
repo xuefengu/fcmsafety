@@ -41,7 +41,7 @@ devtools::install_github("QizhiSu/fcmsafety")
 
 Below walks you through the way to go step by step. 
 
-You do not have the "rio" and "dplyr" package installed, please install it first. 
+If you do not have the "rio" and "dplyr" package installed, please install it first. 
 If you do, just skip this step.
 
 ```{r}
@@ -61,8 +61,8 @@ You have to first update all the databases and load them into the global environ
 # You don't have to update all the databases as we have prepared them (updated 
 # on 2021/11/11) and can be used directly. In case you want to have the latest 
 # databases (if you find any update of these database after 2021/11/11), please
-# run, if might take long time as retrieving meta data for all these databases
-# is time-consuming.
+# run update_databases(), it might take long time as retrieving meta data for 
+# all these databases is time-consuming.
 update_databases()
 
 # If you have updated the databases yourself, please run:
@@ -72,32 +72,35 @@ load_databases()
 ```
 
 ### Process your data
-####1.  Read in your data
+1.  Read in your data
 
-Please name your file in English but not Chinese. There should be at least two 
+Please name your file in English but not Chinese (Chinese letters are not well 
+supported in some functions). There should be at least two 
 column in your data. One contains chemical names in English, another one includes
 CAS number. The program will first use CAS and then chemical name to retrieve 
 meta data from Pubchem. A good chemical name is always favorable but CAS number
 is not mandatory. 
 ```{r}
-# Please enter the absolute path of your data, e.g., "D/my data/mydata.xlsx".
-data <- rio::import("mydata.xlsx")
+# Please enter the path of your data, e.g., "D:/my data/mydata.xlsx".
+data <- rio::import("D:/my data/mydata.xlsx")
 ```
 
-####2. Extract cid and meta data
+2. Extract cid and meta data
 
 Please specify which column contains CAS number by the "cas_col" argument, and 
 chemical name by the "name_col" argument. If you have InChIKey column, you can 
-also specify it by "inchikey_col".
+also specify it by "inchikey_col". Depends on the size of your data, it migth
+take long time.
 ```{r}
 data <- data %>% extract_cid(cas_col = 1, name_col = 2) %>% extract_meta()
 ```
 
-####3. Export file for Toxtree
+3. Export file for Toxtree
 
-For compounds that do not present in any of the databases we consider, we can use 
-Toxtree (http://toxtree.sourceforge.net/) to predict its Cramer rules level. We 
-now can export a file that can be used by Toxtree for batch processing. 
+For compounds that do not present in any of the databases we consider here, we 
+can use Toxtree (http://toxtree.sourceforge.net/) to predict its Cramer rules
+level which will be used for assigning toxicity level in the following step. 
+We now can export a file that can be used by Toxtree for batch processing. 
 ```{r}
 # This code will generate a file name "for_toxtree.csv"
 export4toxtree(data, cas_col = 1, name_col = 2)
@@ -105,15 +108,15 @@ export4toxtree(data, cas_col = 1, name_col = 2)
 export4toxtree(data, cas_col = 1, name_col = 2, output = "D:/data/mydata_for_toxtree.csv")
 ```
 
-####4. Toxtree batch processing
+4. Toxtree batch processing
 
-    ![\nToxtree batch processing 1](vignettes/toxtree_batch_processing1.png){width=500px}
-    ![\nToxtree batch processing 2](vignettes/toxtree_batch_processing2.png){width=500px}
-    ![\nToxtree batch processing 3](vignettes/toxtree_batch_processing3.png){width=500px}
-    Normally, this step is quite fast, but we noticed that polyethylene glycols might
-    take quite long time.
+    ![Toxtree batch processing 1](vignettes/toxtree_batch_processing1.png){width=500px}
+    ![Toxtree batch processing 2](vignettes/toxtree_batch_processing2.png){width=500px}
+    ![Toxtree batch processing 3](vignettes/toxtree_batch_processing3.png){width=500px}
+Normally, this step is quite fast, but we noticed that polyethylene glycols might
+take quite long time.
     
-####5. Assign toxicity, get flavornet and classyfire information
+5. Assign toxicity, get flavornet and classyfire information
 
 This step requires the results from Toxtree (assuming you have the result in 
 "D:/data/mydata_toxtree_results.csv"). On the default settings, flavornet and 
@@ -130,7 +133,7 @@ data_complete <- data %>%
                     cas = FALSE, flavornet = FALSE, classyfire = FALSE)
 ```
 
-####6. Export results
+6. Export results
 ```{r}
 rio::export(data_complete, "D:/data/mydata_result.xlsx")
 ```
