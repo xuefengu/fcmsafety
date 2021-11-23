@@ -31,7 +31,7 @@
 #' x <- data.frame(CAS = "128-37-0", Name = "BHT", InChIKey = "NLZUEZXRPGMBCV-UHFFFAOYSA-N")
 #' x_cid <- extract_cid(x, cas_col = 1, name_col = 2, inchikey_col = 3)
 extract_cid <- function(data, cas_col, name_col, inchikey_col = FALSE){
-  if(inchikey_col == TRUE) {
+  if(inchikey_col != FALSE) {
     data <- data %>%
       mutate(CID = get_cid(.[, inchikey_col], match = "first")$cid)
   } else {
@@ -40,9 +40,10 @@ extract_cid <- function(data, cas_col, name_col, inchikey_col = FALSE){
 
   data <- data %>%
     mutate(CID = get_cid(.[, cas_col], match = "first")$cid,
-           CID = case_when(is.na(CID) ~
-                             get_cid(.[, name_col], from = "name", match = "first")$cid,
-                           TRUE ~ CID),
+           CID = case_when(
+             is.na(CID) ~ webchem::get_cid(.[, name_col],
+                                           from = "name", match = "first")$cid,
+             TRUE ~ CID),
            CID = as.integer(CID))
 
   return(data)
