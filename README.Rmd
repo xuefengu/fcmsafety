@@ -34,7 +34,8 @@ knitr::opts_chunk$set(
   The toxicity level assignment follows the rules list below:
   
     ![\nToxicity levels](inst/toxicity_levels.png){width=500px}
-  
+    
+    
   Please bear in mind that the toxicity level assignment here is on the basis of 
   individual compounds, whilst substances listed in the aforementioned databases
   could be groups of compounds. These groups of substances will not be considered

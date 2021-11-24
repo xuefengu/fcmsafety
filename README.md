@@ -25,7 +25,9 @@ Chemical Pollution (IPCP) commissioned by UN Environment
 
 The toxicity level assignment follows the rules list below:
 
-    ![\nToxicity levels](inst/toxicity_levels.png){width=500px}
+    <figure>
+    <img src="inst/toxicity_levels.png" width="500" alt="\ntoxicity_levels" /><figcaption aria-hidden="true">\ntoxicity_levels</figcaption>
+    </figure>
 
 Please bear in mind that the toxicity level assignment here is on the
 basis of individual compounds, whilst substances listed in the
@@ -170,15 +172,15 @@ export4toxtree(data, cas_col = 1, name_col = 2, output = "D:/data/mydata_for_tox
 4.  Toxtree batch processing
 
     <figure>
-    <img src="inst/toxtree_batch_processing1.png" width="500" alt="batch processing 1" /><figcaption aria-hidden="true">batch processing 1</figcaption>
+    <img src="inst/toxtree_batch_processing1.png" width="500" alt="\nbatch processing 1" /><figcaption aria-hidden="true">\nbatch processing 1</figcaption>
     </figure>
 
     <figure>
-    <img src="inst/toxtree_batch_processing2.png" width="500" alt="batch processing 2" /><figcaption aria-hidden="true">batch processing 2</figcaption>
+    <img src="inst/toxtree_batch_processing2.png" width="500" alt="\nbatch processing 2" /><figcaption aria-hidden="true">\nbatch processing 2</figcaption>
     </figure>
 
     <figure>
-    <img src="inst/toxtree_batch_processing3.png" width="500" alt="batch processing 3" /><figcaption aria-hidden="true">batch processing 3</figcaption>
+    <img src="inst/toxtree_batch_processing3.png" width="500" alt="\nbatch processing 3" /><figcaption aria-hidden="true">\nbatch processing 3</figcaption>
     </figure>
 
 Normally, this step is quite fast, but we noticed that polyethylene
