@@ -45,10 +45,7 @@ export4toxtree <-
 #' @param flavornet A logical value for flavornet information retrieval.
 #' @param cas_col In case you want to retrieve flavornet information, please
 #' specify the index of column that contains CAS number which can be retrieved
-#' using \code{extract_meta()} function. If you follow the suggested way to extract
-#' meta data (\code{extract_cid()} -> \code{extract_meta(cas = TRUE)}), you can
-#' leave this argument as default since the last column will contain the retrieved
-#' CAS which is the default value.
+#' using \code{extract_meta()} function.
 #' @param classyfire A logical value for classyfire information retrieval.
 #'
 #' @return A data.frame or tibble with toxicity assigned.
@@ -64,7 +61,7 @@ evaluate_compound <-
   function(data,
            toxtree_result = "toxtree_results.csv",
            flavornet = TRUE,
-           cas_col = ncol(data),
+           cas_col = NA,
            classyfire = TRUE
            ) {
   # read in toxtree result

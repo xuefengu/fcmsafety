@@ -189,20 +189,17 @@ glycols might take quite long time.
 This step requires the results from Toxtree (assuming you have the
 result in “D:/data/mydata\_toxtree\_results.csv”). On the default
 settings, flavornet and classyfire information are included, which is
-more time-consuming depends on the size of your data. The CAS number
-containing column is automatically calculated if you follow the above
-mentioned step (extract\_cid() %&gt;% extract\_meta()). Otherwise, you
-need to specify it by the “cas\_col” argument.
+more time-consuming depends on the size of your data.
 
 ``` r
 data_complete <- data %>% 
-  evaluate_compound(toxtree_result = "D:/data/mydata_toxtree_results.csv")
+  evaluate_compound(cas_col = 1, toxtree_result = "D:/data/mydata_toxtree_results.csv")
 # If you don't need flavonet and classyfire information. In addition, for 
 # flavonet = TRUE, cas = TRUE is required as flavornet information retrieval 
 # is based on CAS number assuming you don't have complete CAS number.
 data_complete <- data %>% 
   evaluate_compound(toxtree_result = "D:/data/mydata_toxtree_results.csv",
-                    cas = FALSE, flavornet = FALSE, classyfire = FALSE)
+                    cas_col = 1, flavornet = FALSE, classyfire = FALSE)
 ```
 
 6.  Export results
