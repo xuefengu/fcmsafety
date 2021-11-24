@@ -31,10 +31,8 @@ knitr::opts_chunk$set(
   6. Specific Migration Limit (SML) from China GB 9685 regulation (Provided by 
   IQTC). 
     
-  The toxicity level assignment follows the rules list below:
-  
-    ![\nToxicity levels](inst/toxicity_levels.png){width=500px}
-    
+  The toxicity level assignment follows the rules listed in the inst/toxicity_levels.png
+  (don't know why it is not rendered in this readme file)
     
   Please bear in mind that the toxicity level assignment here is on the basis of 
   individual compounds, whilst substances listed in the aforementioned databases
