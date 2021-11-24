@@ -4,30 +4,32 @@
 \alias{extract_cid}
 \title{Extract compound identification number (CID) from Pubchem}
 \usage{
-extract_cid(data, cas_col, name_col, inchikey_col = FALSE)
+extract_cid(data, name_col = FALSE, cas_col = FALSE, inchikey_col = FALSE)
 }
 \arguments{
-\item{data}{A data.frame or tibble contains at least CAS and Chemical name columns.}
-
-\item{cas_col}{The index of column that contains CAS information. CAS number
-is not mandatory for each compound, if no CAS is available, then chemical name
-will be used for retreival. However, a column index is still required.}
+\item{data}{A data.frame or tibble contains at least CAS, Chemical name, or
+InChIKey column.}
 
 \item{name_col}{The index of column that contains chemical name.}
 
-\item{inchikey_col}{The index of column that contains InChIKey. It is optional
-and the default value is \code{FALSE} assuming no InChIKey column is provided.}
+\item{cas_col}{The index of column that contains CAS information. CAS number
+is not mandatory for each compound, if no CAS is available, then chemical name
+will be used for retrieval.}
+
+\item{inchikey_col}{The index of column that contains InChIKey. It is optional.}
 }
 \value{
 A data.frame or tibble with a CID column added.
 }
 \description{
 \code{extract_cid()} is a simple wrapper of the \code{get_cid()} function from
-the \emph{webchem} package. It extracts \strong{cid} based on \strong{InChIKey},
-\strong{CAS} and then on chemical names when no \strong{cid} is available
-from the previous step. When multiple matches returns, only the first one will
-be kept. Importantly, it appends these information to your original data.frame,
-which is more friendly for new R users.
+the \emph{webchem} package. It extracts \strong{cid} based on the keys, i.e.,
+\strong{InChIKey}, \strong{CAS} and \strong{chemical names}. You can use
+any or all of these keys. In the latter case, it will first use InChIKey,
+followed by CAS and chemical name if no CID is available from the previous step.
+When multiple matches returns, only the first one will be kept. Importantly,
+it appends these information to your original data.frame, which is more friendly
+for new R users. Only English chemical name is accepted.
 }
 \examples{
 # without InChIKey

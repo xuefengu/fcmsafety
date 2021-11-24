@@ -7,8 +7,8 @@
 evaluate_compound(
   data,
   toxtree_result = "toxtree_results.csv",
-  cas = TRUE,
   flavornet = TRUE,
+  cas_col = ncol(data),
   classyfire = TRUE
 )
 }
@@ -20,11 +20,14 @@ The defalut value is "toxtree_results.csv", which means the output files in
 Toxtree batching processing is "toxtree_results.csv". If other output name is
 used in Toxtree, please use the corresponding name here.}
 
-\item{cas}{A logical value to determine if you want to retrieve CAS. It will
-generate a new column named "CAS_retrieved". It is necessary for extracting
-flavornet information.}
-
 \item{flavornet}{A logical value for flavornet information retrieval.}
+
+\item{cas_col}{In case you want to retrieve flavornet information, please
+specify the index of column that contains CAS number which can be retrieved
+using \code{extract_meta()} function. If you follow the suggested way to extract
+meta data (\code{extract_cid()} -> \code{extract_meta(cas = TRUE)}), you can
+leave this argument as default since the last column will contain the retrieved
+CAS which is the default value.}
 
 \item{classyfire}{A logical value for classyfire information retrieval.}
 }

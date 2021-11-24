@@ -26,7 +26,7 @@ export4toxtree <-
   data <- data %>%
     mutate(NAME = .[, name_col],
            CAS = .[, cas_col],
-           SMILES = IsomericSMILES) %>%
+           SMILES = SMILES) %>%
     select(NAME, CAS, SMILES) %>%
     filter(!is.na(SMILES))
 
@@ -42,10 +42,13 @@ export4toxtree <-
 #' The defalut value is "toxtree_results.csv", which means the output files in
 #' Toxtree batching processing is "toxtree_results.csv". If other output name is
 #' used in Toxtree, please use the corresponding name here.
-#' @param cas A logical value to determine if you want to retrieve CAS. It will
-#' generate a new column named "CAS_retrieved". It is necessary for extracting
-#' flavornet information.
 #' @param flavornet A logical value for flavornet information retrieval.
+#' @param cas_col In case you want to retrieve flavornet information, please
+#' specify the index of column that contains CAS number which can be retrieved
+#' using \code{extract_meta()} function. If you follow the suggested way to extract
+#' meta data (\code{extract_cid()} -> \code{extract_meta(cas = TRUE)}), you can
+#' leave this argument as default since the last column will contain the retrieved
+#' CAS which is the default value.
 #' @param classyfire A logical value for classyfire information retrieval.
 #'
 #' @return A data.frame or tibble with toxicity assigned.
@@ -60,8 +63,8 @@ export4toxtree <-
 evaluate_compound <-
   function(data,
            toxtree_result = "toxtree_results.csv",
-           cas = TRUE,
            flavornet = TRUE,
+           cas_col = ncol(data),
            classyfire = TRUE
            ) {
   # read in toxtree result
@@ -69,7 +72,7 @@ evaluate_compound <-
 
   data <- data %>%
     mutate(
-      Cramer_rules = tox$Cramer.rules[match(IsomericSMILES, tox$SMILES)],
+      Cramer_rules = tox$Cramer.rules[match(SMILES, tox$SMILES)],
       # to check if the compounds present in any of the database
       SVHC = case_when(InChIKey %in% svhc_meta$InChIKey ~ "Y"),
       CMR = case_when(InChIKey %in% cmr_meta$InChIKey ~ "Y"),
@@ -122,24 +125,14 @@ evaluate_compound <-
       China_SML_group = NULL
     )
 
-
-  # retrieve CAS
-  if(cas == TRUE) {
-    for(i in 1:nrow(data)){
-      # keep only the first one.
-      tmp <- webchem::pc_sect(data$CID[i], "cas")$Result[1] %>%
-        suppressWarnings()
-      if(length(tmp) != 0){data$CAS_retrieved[i] <- tmp}
-    }
-  }
-
   if(flavornet == TRUE) {
-    data$Flavornet = webchem::fn_percept(data$CAS_retrieved)
+    data$Flavornet = webchem::fn_percept(data[, cas_col])
     }
 
   if(classyfire == TRUE) {
     # extract classification from classyfireR
     classyfire <- data$InChIKey %>%
+      unique() %>% # remove duplicates
       purrr::map(classyfireR::get_classification) %>%
       purrr::discard(is.null)
     # extract meta data for classification
@@ -153,7 +146,7 @@ evaluate_compound <-
     data <-
       classyfire %>%
       purrr::map(classyfireR::classification) %>%
-      sapply(extract_cla) %>%
+      lapply(extract_cla) %>%
       do.call("bind_rows", .) %>% # collapse the list into a data.frame
       cbind(classyfire_meta, .) %>% # join with InChIKey
       left_join(data, ., by = "InChIKey") # join with the raw table

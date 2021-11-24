@@ -4,10 +4,14 @@
 \alias{extract_meta}
 \title{Extract meta data from Pubchem}
 \usage{
-extract_meta(data)
+extract_meta(data, cas = TRUE)
 }
 \arguments{
 \item{data}{A data.frame or tibble containing at least CID column.}
+
+\item{cas}{A logical value to determine if you want to retrieve CAS. It will
+generate a new column named "CAS_retrieved". It is necessary for extracting
+flavornet information in the \code{evaluate_compound()} function.}
 }
 \value{
 A data.frame or tibble with IsomericSMILES, InChIKey, ExactMass,
@@ -17,8 +21,10 @@ and MolecularFormula extracted.
 \code{extract_meta()} is a wrapper of the the \code{pc_prop()} function from
 the \emph{webchem}. It extracts only \strong{"IsomericSMILES", "InChIKey",
 "ExactMass", "MolecularFormula"} properties and appends them into the input
-data.frame or tibble. It can be used together with the \code{extract_cid()}
-function. The CID column must has "CID" column name.
+data.frame or tibble. It also support extracting CAS number with the cas
+argument. It can be used together with the \code{extract_cid()}
+function. If you previously have columns named "SMILES", "InChIKey", "ExactMass",
+or "Formula", they will be modified to "_old" suffix.
 }
 \examples{
 # Together with \code{extract_cie()}

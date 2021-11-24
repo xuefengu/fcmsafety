@@ -4,5 +4,6 @@ utils::globalVariables(c(".", "CID", "value", "Hazard Statement Code(s)", "<<-",
                          "eu_sml_meta", "china_sml_meta", "SML", "SML_group",
                          "SML\r\n                     [mg/kg]",
                          "SML (T)\r\n                     [mg/kg]",
-                         "SML(T)\r\n                     [mg/kg]\r\n                     (Group restriction No)"
+                         "SML(T)\r\n                     [mg/kg]\r\n                     (Group restriction No)",
+                         "Formula", "ExactMass", "MolecularFormula"
                          ))

@@ -1,6 +1,6 @@
 Package: fcmsafety
 Title: Evaluate Safety of Compounds from Food Contact Materials
-Version: 0.0.0.9000
+Version: 0.1.2
 Authors@R: 
     person("Qizhi", "Su", email = "Sukissqz@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0002-8124-997X"))
@@ -32,3 +32,7 @@ Imports:
     rvest,
     stringr,
     webchem
+URL: https://github.com/QizhiSu/fcmsafety
+BugReports: https://github.com/QizhiSu/fcmsafety/issues
+Remotes: 
+    aberHRML/classyfireR

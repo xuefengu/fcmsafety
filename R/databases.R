@@ -276,7 +276,8 @@ load_databases <- function(use_default = TRUE) {
                                  sheet = "SML_group")
     edc_meta <- rio::import(system.file("edc_meta.xlsx", package = "fcmsafety"))
     china_sml_meta <- rio::import(system.file("china_sml_meta_cleaned.xlsx",
-                                               package = "fcmsafety"))
+                                               package = "fcmsafety")) %>%
+      suppressWarnings()
   }
 
   # read in the glogal environment and clean them up
@@ -305,5 +306,6 @@ load_databases <- function(use_default = TRUE) {
              as.numeric())
   edc_meta <<- edc_meta %>% filter(!is.na(InChIKey))
   china_sml_meta <<- china_sml_meta
+
 }
 
