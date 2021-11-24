@@ -83,29 +83,32 @@ extract_cid <- function(data,
 #' the \emph{webchem}. It extracts only \strong{"IsomericSMILES", "InChIKey",
 #' "ExactMass", "MolecularFormula"} properties and appends them into the input
 #' data.frame or tibble. It also support extracting CAS number with the cas
-#' argument. It can be used together with the \code{extract_cid()}
+#' argument and flavor information from Flavornet with the flavornet argument.
+#' It can be used together with the \code{extract_cid()}
 #' function. If you previously have columns named "SMILES", "InChIKey", "ExactMass",
 #' or "Formula", they will be modified to "_old" suffix.
 #'
 #' @param data A data.frame or tibble containing at least CID column.
 #' @param cas A logical value to determine if you want to retrieve CAS. It will
 #' generate a new column named "CAS_retrieved". It is necessary for extracting
-#' flavornet information in the \code{evaluate_compound()} function.
+#' flavornet information.
+#' @param flavornet A logical value for flavornet information retrieval.
+#' cas = TRUE is required for this purpose.
 #'
 #' @return A data.frame or tibble with IsomericSMILES, InChIKey, ExactMass,
 #' and MolecularFormula extracted.
 #'
 #' @export
 #'
-#' @importFrom webchem pc_prop
+#' @import webchem
 #' @import dplyr
 #'
 #' @examples
-#' # Together with \code{extract_cie()}
+#' # Together with \code{extract_cid()}
 #' library(dplyr)
 #' x <- data.frame(CAS = "128-37-0", Name = "BHT")
 #' x_cid <- extract_cid(x, cas_col = 1, name_col = 2) %>% extract_meta()
-extract_meta <- function(data, cas = TRUE) {
+extract_meta <- function(data, cas = FALSE, flavornet = FALSE) {
   # to avoid duplicate InChIKey when merging the extracted data
   if("InChIKey" %in% colnames(data))
     data <- data %>% rename(InChIKey_old = InChIKey)
@@ -135,6 +138,46 @@ extract_meta <- function(data, cas = TRUE) {
     }
   }
 
+  # retrieve flavonet
+  if(flavornet == TRUE) {
+    data$Flavornet = webchem::fn_percept(data$CAS_retrieved)
+  }
+
   return(data)
+}
+
+
+#' Extract classyfire information
+#'
+#' @param data Data includes at least InChIKey which is used for retrieval
+#'
+#' @return A data.frame
+#' @export
+#'
+#' @import classyfireR
+#' @import purrr
+extract_classyfire <- function(data) {
+    # extract classification from classyfireR
+    classyfire <- data$InChIKey %>%
+      unique() %>% # remove duplicates
+      purrr::map(classyfireR::get_classification) %>%
+      purrr::discard(is.null)
+    # extract meta data for classification
+    classyfire_meta <- classyfire %>%
+      purrr::map(classyfireR::meta)%>%
+      sapply("[[", 1) %>%
+      str_remove("InChIKey=") %>%
+      as.data.frame() %>%
+      rename(InChIKey = value)
+
+    data <-
+      classyfire %>%
+      purrr::map(classyfireR::classification) %>%
+      lapply(extract_cla) %>%
+      do.call("bind_rows", .) %>% # collapse the list into a data.frame
+      cbind(classyfire_meta, .) %>% # join with InChIKey
+      left_join(data, ., by = "InChIKey") # join with the raw table
+
+    return(data)
 }
 

@@ -42,26 +42,26 @@ from the **webchem** and **classyfireR** package to ease CID, InChIKey,
 SMILES, Formula, ExactMass, CAS, flavonet, and classifire information
 retrieval.
 
-## Release notes (2021.11.24 Version 0.1.2)
+## Release notes (2021.11.24 Version 0.1.3)
 
 ### Enhancement
 
 1.  extract\_cid() now support any of the following keys, “InChIKey”,
     “CAS”, or “Name”, as well as their combinations.
-2.  Add a default value to the cas\_col argument in
-    evaluate\_compound().
 
 ### Bug fixes
 
-1.  evaluate\_compound() “Error: Argument 1 must have names.” error
-    fixed.
-2.  Remove duplicates results if you have duplicate InChIKey values.
-3.  Remove warnings when load\_databases().
+1.  Remove duplicates results if you have duplicate InChIKey values.
+2.  Remove warnings when load\_databases().
 
 ### Others
 
-1.  Retrieval CAS number in the extract\_meta() function instead of in
-    evaluate\_compound().
+1.  Deprecate evaluate\_compound() function and create a new one named
+    assign\_toxicity()
+2.  Retrieval CAS number and flavornet information in the
+    extract\_meta() function.
+3.  Create a new function named extract\_claasyfire() for classyfire
+    information retrieval
 
 ## Installation
 
@@ -141,15 +141,17 @@ data <- rio::import("D:/my data/mydata.xlsx")
 Please specify which column contains CAS number by the “cas\_col”
 argument, InChIKey by “inchikey\_col”, and chemical name by the
 “name\_col” argument. You can also specify all these arguments. In this
-case, it will first use InChIKey, and then CAS and Name. On the default
-setting, CAS number, which is mandatory if you want to extract flavonet
-information in the evaluate\_compound() function, will be extracted as
-well in the extract\_meta() function. If you don’t need it, please set
-extract\_meta(cas = FALSE). Depends on the size of your data, it might
-take long time.
+case, it will first use InChIKey, and then CAS and Name. To get
+flavornet information, cas = TRUE is required. Depends on the size of
+your data, it might take long time.
 
 ``` r
+# No CAS
 data <- data %>% extract_cid(name_col = 1) %>% extract_meta()
+# With CAS
+data <- data %>% extract_cid(name_col = 1) %>% extract_meta(cas = TRUE)
+# With flavornet
+data <- data %>% extract_cid(name_col = 1) %>% extract_meta(cas = TRUE, flavonet = TRUE)
 ```
 
 3.  Export file for Toxtree
@@ -184,22 +186,14 @@ export4toxtree(data, cas_col = 1, name_col = 2, output = "D:/data/mydata_for_tox
 Normally, this step is quite fast, but we noticed that polyethylene
 glycols might take quite long time.
 
-5.  Assign toxicity, get flavornet and classyfire information
+5.  Assign toxicity
 
 This step requires the results from Toxtree (assuming you have the
-result in “D:/data/mydata\_toxtree\_results.csv”). On the default
-settings, flavornet and classyfire information are included, which is
-more time-consuming depends on the size of your data.
+result in “D:/data/mydata\_toxtree\_results.csv”).
 
 ``` r
 data_complete <- data %>% 
-  evaluate_compound(cas_col = 1, toxtree_result = "D:/data/mydata_toxtree_results.csv")
-# If you don't need flavonet and classyfire information. In addition, for 
-# flavonet = TRUE, cas = TRUE is required as flavornet information retrieval 
-# is based on CAS number assuming you don't have complete CAS number.
-data_complete <- data %>% 
-  evaluate_compound(toxtree_result = "D:/data/mydata_toxtree_results.csv",
-                    cas_col = 1, flavornet = FALSE, classyfire = FALSE)
+  assign_toxicity(toxtree_result = "D:/data/mydata_toxtree_results.csv")
 ```
 
 6.  Export results
