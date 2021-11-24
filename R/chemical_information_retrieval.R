@@ -156,6 +156,7 @@ extract_meta <- function(data, cas = FALSE, flavornet = FALSE) {
 #'
 #' @import classyfireR
 #' @import purrr
+#' @import dplyr
 extract_classyfire <- function(data) {
     # extract classification from classyfireR
     classyfire <- data$InChIKey %>%
@@ -167,7 +168,7 @@ extract_classyfire <- function(data) {
       purrr::map(classyfireR::meta)%>%
       sapply("[[", 1) %>%
       str_remove("InChIKey=") %>%
-      as.data.frame() %>%
+      as_tible() %>%
       rename(InChIKey = value)
 
     data <-

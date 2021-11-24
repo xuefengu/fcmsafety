@@ -46,7 +46,7 @@ retrieval.
 
 ### Enhancement
 
-1.  extract\_cid() now support any of the following keys, “InChIKey”,
+1.  extract\_cid() now supports any of the following keys, “InChIKey”,
     “CAS”, or “Name”, as well as their combinations.
 
 ### Bug fixes
@@ -57,11 +57,11 @@ retrieval.
 ### Others
 
 1.  Deprecate evaluate\_compound() function and create a new one named
-    assign\_toxicity()
+    assign\_toxicity().
 2.  Retrieval CAS number and flavornet information in the
     extract\_meta() function.
 3.  Create a new function named extract\_claasyfire() for classyfire
-    information retrieval
+    information retrieval.
 
 ## Installation
 
@@ -154,7 +154,17 @@ data <- data %>% extract_cid(name_col = 1) %>% extract_meta(cas = TRUE)
 data <- data %>% extract_cid(name_col = 1) %>% extract_meta(cas = TRUE, flavonet = TRUE)
 ```
 
-3.  Export file for Toxtree
+3.  Extract classyfire information
+
+After extracting meta data from Pubchem by extract\_meta(), which means
+the data will has a column named InChIkey, then we can get the chemical
+structure classification done by classyfire.
+
+``` r
+data <- data %>% extract_classyfire()
+```
+
+4.  Export file for Toxtree
 
 For compounds that do not present in any of the databases we consider
 here, we can use Toxtree (<http://toxtree.sourceforge.net/>) to predict
@@ -169,7 +179,7 @@ export4toxtree(data, cas_col = 1, name_col = 2)
 export4toxtree(data, cas_col = 1, name_col = 2, output = "D:/data/mydata_for_toxtree.csv")
 ```
 
-4.  Toxtree batch processing
+5.  Toxtree batch processing
 
     <figure>
     <img src="inst/toxtree_batch_processing1.png" width="500" alt="batch processing 1" /><figcaption aria-hidden="true">batch processing 1</figcaption>
@@ -186,7 +196,7 @@ export4toxtree(data, cas_col = 1, name_col = 2, output = "D:/data/mydata_for_tox
 Normally, this step is quite fast, but we noticed that polyethylene
 glycols might take quite long time.
 
-5.  Assign toxicity
+6.  Assign toxicity
 
 This step requires the results from Toxtree (assuming you have the
 result in “D:/data/mydata\_toxtree\_results.csv”).
@@ -196,7 +206,7 @@ data_complete <- data %>%
   assign_toxicity(toxtree_result = "D:/data/mydata_toxtree_results.csv")
 ```
 
-6.  Export results
+7.  Export results
 
 ``` r
 rio::export(data_complete, "D:/data/mydata_result.xlsx")
