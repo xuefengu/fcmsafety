@@ -42,26 +42,11 @@ from the **webchem** and **classyfireR** package to ease CID, InChIKey,
 SMILES, Formula, ExactMass, CAS, flavonet, and classifire information
 retrieval.
 
-## Release notes (2021.11.24 Version 0.1.3)
+## Release notes (2021.12.03 Version 0.1.4)
 
 ### Enhancement
 
-1.  extract\_cid() now supports any of the following keys, “InChIKey”,
-    “CAS”, or “Name”, as well as their combinations.
-
-### Bug fixes
-
-1.  Remove duplicates results if you have duplicate InChIKey values.
-2.  Remove warnings when load\_databases().
-
-### Others
-
-1.  Deprecate evaluate\_compound() function and create a new one named
-    assign\_toxicity().
-2.  Retrieval CAS number and flavornet information in the
-    extract\_meta() function.
-3.  Create a new function named extract\_claasyfire() for classyfire
-    information retrieval.
+1.  Add a function to assign meta data.
 
 ## Installation
 
@@ -156,18 +141,26 @@ data <- data %>% extract_cid(name_col = 1) %>% extract_meta(cas = TRUE, flavonet
 
 If you have some compounds that are not present in Pubchem, for example
 many oligomers found in food contact materials. there will be no SMILES
-retrieved for these compounds using . In this case, you can use
-function. However, a *.txt file containing Name and SMILES of these
-compounds is required. There are two options to prepare this text file.
-One is to prepare it manually, the column names must be Name and SMILES,
-respectively (case-insensitive). Another one is to prepare *.MOL files
-(case-insensitive) of these molecules and extract SMILES using and
-functions from the package . Note that the name in your *.txt file or
-*.MOL files have to be consistent with the one you have in your data as
-Name is used for matching. Assuming you have all your \*MOL files in the
-“D:/my data” folder, then you can follow these steps:
+retrieved for these compounds using `extract_meta`. In this case, you
+can use `assign_meta` function. However, a *.txt file containing Name
+and SMILES of these compounds is required. There are two options to
+prepare this text file. One is to prepare it manually, the column names
+must be Name and SMILES, respectively (case-insensitive). Another one is
+to prepare *.MOL files (case-insensitive) of these molecules and extract
+SMILES using `combine_mol2sdf()` and `extract_structure()` functions
+from the `mspcompiler` package
+[mspcompiler](https://github.com/QizhiSu/mspcompiler). Note that the
+name in your *.txt file or *.MOL files have to be consistent with the
+one you have in your data as Name is used for matching. Assuming you
+have all your \*MOL files in the “D:/my data” folder, then you can
+follow these steps:
 
 ``` r
+# If you have not install the mspcompiler package, please install it following
+# the instruction in its Github homepage https://github.com/QizhiSu/mspcompiler.
+# Once you have it installed
+library(mspcompiler)
+
 # This function combines all *.MOL files in yhe providing folder into a single 
 # *.sdf file from which will be used to extract SMILES. 
 combine_mol2sdf(input = "D:/my data", 
