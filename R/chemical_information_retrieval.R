@@ -109,6 +109,8 @@ extract_cid <- function(data,
 #' x <- data.frame(CAS = "128-37-0", Name = "BHT")
 #' x_cid <- extract_cid(x, cas_col = 1, name_col = 2) %>% extract_meta()
 extract_meta <- function(data, cas = FALSE, flavornet = FALSE) {
+  data$CID <- as.integer(data$CID)
+
   # to avoid duplicate InChIKey when merging the extracted data
   if("InChIKey" %in% colnames(data))
     data <- data %>% rename(InChIKey_old = InChIKey)
@@ -182,3 +184,40 @@ extract_classyfire <- function(data) {
     return(data)
 }
 
+
+#' Assign meta data (at the moment only SMILES) to the data
+#'
+#' If you have some compounds that are not present in the Pubchem, there
+#' will be no SMILES retrieved for these compounds using \code{extract_meta}.
+#' The function offers a way to assign SMIELS for them. However, a txt file
+#' containing Name and SMILES of these compounds is required. There are two options
+#' to prepare this txt file. One is to prepare it manually, the column names must
+#' be Name and SMILES, respectively(case-insensitive). Another one is to prepare
+#' *.MOL files of these molecules and extract SMILES using the \code{combine_mol2sdf()}
+#' and \code{extract_structure()} functions from the \code{mspcompiler} package
+#' \url{https://github.com/QizhiSu/mspcompiler}. Note that the name in your *.txt
+#' file or *.MOL files have to be consistent with the one you have in your data
+#' as Name is used for matching.
+#'
+#' @param data Your data after \code{extract_meta()}.
+#' @param meta_file A *.txt file containg at least Name and SMILES, which can
+#' be manully prepared or converted from *MOL files by the \code{combine_mol2sdf()}
+#' and \code{extract_structure()} functions from the \code{mspcompiler} package
+#' \url{https://github.com/QizhiSu/mspcompiler}.
+#'
+#' @importFrom rio import
+#'
+#' @return A dataframe or tibble with SMILES assigned.
+#' @export
+assign_meta <- function(data, meta_file) {
+  meta_data <- rio::import(meta_file)
+  colnames(data)[grep("name", colnames(data), ignore.case = TRUE)] <- "Name"
+  colnames(meta_data)[grep("smiles", colnames(meta_data),
+                           ignore.case = TRUE)] <- "SMILES"
+  data$SMILES <- ifelse(is.na(data$SMILES),
+                        meta_data$SMILES[match(tolower(trimws(data$Name)),
+                                               tolower(trimws(meta_data$Name)))],
+                        data$SMILES)
+
+  return(data)
+}

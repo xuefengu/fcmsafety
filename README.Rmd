@@ -146,6 +146,34 @@ data <- data %>% extract_cid(name_col = 1) %>% extract_meta(cas = TRUE)
 data <- data %>% extract_cid(name_col = 1) %>% extract_meta(cas = TRUE, flavonet = TRUE)
 ```
 
+
+If you have some compounds that are not present in Pubchem, for example many 
+oligomers found in food contact materials. there will be no
+SMILES retrieved for these compounds using \code{extract_meta}. In this case,
+you can use \code{assign_meta} function. However, a *.txt file containing Name 
+and SMILES of these compounds is required. There are two options to prepare this
+text file. One is to prepare it manually, the column names must be Name and 
+SMILES, respectively (case-insensitive). Another one is to prepare *.MOL files 
+(case-insensitive) of these molecules and extract SMILES using \code{combine_mol2sdf()}
+and \code{extract_structure()} functions from the \code{mspcompiler} package
+\url{https://github.com/QizhiSu/mspcompiler}. Note that the name in your *.txt
+file or *.MOL files have to be consistent with the one you have in your data
+as Name is used for matching. Assuming you have all your *MOL files in the
+"D:/my data" folder, then you can follow these steps:
+```{r}
+# This function combines all *.MOL files in yhe providing folder into a single 
+# *.sdf file from which will be used to extract SMILES. 
+combine_mol2sdf(input = "D:/my data", 
+                output = "D:/my data/mydata.sdf",
+                use_filename = TRUE)
+# The input here is the output from the last command and it will generate a *.txt 
+# file containing Name and SMILES.  
+extract_structure(input = "D:/my data/mydata.sdf",
+                  output = "D:/my data/mydata.txt")
+data <- data %>% assign_meta(meta_file = "D:/my data/mydata.txt")
+```
+
+
 3. Extract classyfire information
 
 After extracting meta data from Pubchem by extract_meta(), which means the data 
